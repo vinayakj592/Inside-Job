@@ -1,0 +1,165 @@
+// Field manual: one entry per SQL concept, keyed by the ids used in puzzles[].concepts.
+// Contract: CONCEPTS[key] = { title, summary, example, gotcha }. `example` runs against SETUP_SQL
+// (verified by scripts/verify-content.mjs) and deliberately avoids giving away puzzle answers.
+export const CONCEPTS = {
+  select: {
+    title: 'SELECT',
+    summary: 'SELECT says which columns you want. FROM says which table. SELECT * shows every column.',
+    example: 'SELECT name, district, owner FROM buildings;',
+    gotcha: 'Column names must be spelled exactly right. Check the Records drawer.',
+  },
+  where: {
+    title: 'WHERE',
+    summary: 'WHERE keeps only the rows that pass a test. Put text in single quotes. Do not put numbers in quotes.',
+    example: "SELECT name, role, shift FROM staff WHERE building_id = 4;",
+    gotcha: 'Use single quotes for text: WHERE shift = \'night\'.',
+  },
+  orderby: {
+    title: 'ORDER BY',
+    summary: 'ORDER BY sorts the rows. ASC means smallest first. This is the default. DESC means largest first.',
+    example: 'SELECT name, age FROM staff WHERE building_id = 8 ORDER BY age DESC;',
+    gotcha: 'Without ORDER BY, the rows can come back in any order.',
+  },
+  limit: {
+    title: 'LIMIT',
+    summary: 'LIMIT 3 keeps only the first 3 rows. Use it with ORDER BY to get the top rows.',
+    example: 'SELECT item, value FROM valuables ORDER BY value DESC LIMIT 3;',
+    gotcha: 'Without ORDER BY, LIMIT gives you some rows, not the top rows.',
+  },
+  aggregate: {
+    title: 'COUNT · SUM · AVG · MIN · MAX',
+    summary: 'These functions turn many rows into one number. COUNT(*) counts rows. SUM adds. AVG finds the average. MIN and MAX find the smallest and largest.',
+    example: "SELECT COUNT(*) AS cameras, SUM(working) AS live FROM cameras WHERE building_id = 8;",
+    gotcha: 'COUNT(column) does not count empty (NULL) values. COUNT(*) counts every row.',
+  },
+  distinct: {
+    title: 'DISTINCT',
+    summary: 'SELECT DISTINCT removes repeated rows. Each different row appears only once.',
+    example: 'SELECT DISTINCT district FROM buildings ORDER BY district;',
+    gotcha: 'DISTINCT looks at the whole row, not only the first column.',
+  },
+  like: {
+    title: 'LIKE',
+    summary: 'LIKE finds text that matches a pattern. % means any letters. _ means exactly one letter.',
+    example: "SELECT name, role FROM staff WHERE role LIKE '%guard%';",
+    gotcha: 'LIKE \'Harbour\' finds only the exact word. Use \'%Harbour%\' to find it anywhere.',
+  },
+  inlist: {
+    title: 'IN ( … )',
+    summary: 'IN checks if a value is in a list. It is a short way to write many ORs.',
+    example: "SELECT plate, owner FROM vehicles WHERE kind IN ('armoured truck', 'rail car');",
+    gotcha: 'IN only finds rows that exist. It never adds new rows.',
+  },
+  between: {
+    title: 'BETWEEN',
+    summary: 'BETWEEN a AND b keeps values from a to b. It works with numbers and times like \'21:00\'.',
+    example: "SELECT lot_no, title, estimate FROM lots WHERE estimate BETWEEN 20000 AND 60000 ORDER BY lot_no;",
+    gotcha: 'Both ends are included. BETWEEN 1 AND 5 includes 1 and 5.',
+  },
+  andor: {
+    title: 'AND · OR · ( )',
+    summary: 'AND needs both tests to be true. OR needs only one. When you use both, put the OR part in brackets.',
+    example: "SELECT name, post FROM staff WHERE building_id = 4 AND (post = 'Main gate' OR post = 'Signal box 9');",
+    gotcha: 'a AND b OR c means (a AND b) OR c. Brackets make your meaning clear.',
+  },
+  join: {
+    title: 'JOIN',
+    summary: 'JOIN puts rows from two tables together. ON says which columns must match, usually an id.',
+    example: 'SELECT c.spot, z.name AS zone, z.alarm FROM cameras c JOIN zones z ON z.id = c.zone_id WHERE c.building_id = 5;',
+    gotcha: 'Give each table a short name, like s for staff. Then write s.name, not just name.',
+  },
+  multijoin: {
+    title: 'Joining three tables',
+    summary: 'You can JOIN three or more tables. Each JOIN adds one table and needs its own ON.',
+    example: 'SELECT a.at, s.name, b.name AS building FROM access_log a JOIN staff s ON s.id = a.staff_id JOIN buildings b ON b.id = a.building_id WHERE a.building_id = 5;',
+    gotcha: 'If you forget one ON, every row matches every other row.',
+  },
+  groupby: {
+    title: 'GROUP BY',
+    summary: 'GROUP BY makes one row for each group. COUNT, SUM and AVG then work on each group.',
+    example: 'SELECT building_id, COUNT(*) AS headcount FROM staff GROUP BY building_id ORDER BY headcount DESC;',
+    gotcha: 'Every column in SELECT must be in GROUP BY, or inside COUNT, SUM, AVG, MIN or MAX.',
+  },
+  having: {
+    title: 'HAVING',
+    summary: 'HAVING filters groups after GROUP BY. WHERE filters single rows before grouping.',
+    example: 'SELECT building_id, COUNT(*) AS cams FROM cameras GROUP BY building_id HAVING COUNT(*) >= 8;',
+    gotcha: 'You cannot use COUNT() in WHERE. Put that test in HAVING.',
+  },
+  leftjoin: {
+    title: 'LEFT JOIN',
+    summary: 'LEFT JOIN keeps every row from the first table, even with no match. The missing values show as NULL.',
+    example: 'SELECT z.name, c.spot FROM zones z LEFT JOIN cameras c ON c.zone_id = z.id WHERE z.building_id = 6;',
+    gotcha: 'A WHERE test on the second table can remove those rows. Put that test in ON instead.',
+  },
+  nulls: {
+    title: 'NULL · IS NULL · COALESCE',
+    summary: 'NULL means the value is empty or unknown. Test it with IS NULL or IS NOT NULL. COALESCE(x, \'none\') shows \'none\' when x is NULL.',
+    example: "SELECT spot, COALESCE(last_service, 'never') AS serviced FROM cameras WHERE building_id = 6;",
+    gotcha: 'x = NULL never works. Always write x IS NULL.',
+  },
+  subquery: {
+    title: 'Subqueries',
+    summary: 'A subquery is a query inside brackets. It runs first. The outer query then uses its answer.',
+    example: 'SELECT name, age FROM staff WHERE age > (SELECT AVG(age) FROM staff) ORDER BY age DESC;',
+    gotcha: 'With =, the subquery must give one value. If it gives many values, use IN.',
+  },
+  casewhen: {
+    title: 'CASE WHEN',
+    summary: 'CASE WHEN gives a label for each row. The first true WHEN wins. ELSE covers the rest. END closes it.',
+    example: "SELECT spot, CASE WHEN working = 1 THEN 'live' ELSE 'dead' END AS status FROM cameras WHERE building_id = 4;",
+    gotcha: 'Put the most specific WHEN first. Always finish with END.',
+  },
+  strings: {
+    title: 'Text functions',
+    summary: 'Text functions change text. UPPER and LOWER change letters. LENGTH counts letters. REPLACE swaps text. || joins two texts.',
+    example: "SELECT number, REPLACE(number, '-', '') AS digits, UPPER(owner) AS owner FROM phones WHERE kind = 'desk';",
+    gotcha: 'SUBSTR starts counting at 1, not 0. In SQL, || joins text. It does not mean OR.',
+  },
+  dates: {
+    title: 'Dates & times',
+    summary: 'Times here are text, like \'2025-10-24 21:30\'. strftime() takes out a part, like the hour. julianday() turns a date into a number of days.',
+    example: "SELECT at, strftime('%H:%M', at) AS clock, date(at, '+1 day') AS next_day FROM calls WHERE caller = '555-0101';",
+    gotcha: 'julianday() differences are in days. Multiply by 1440 to get minutes.',
+  },
+  window: {
+    title: 'Window functions · OVER',
+    summary: 'A window function looks at other rows but keeps every row. RANK() gives a place. SUM() OVER gives a running total. LAG() shows the row before.',
+    example: 'SELECT name, age, RANK() OVER (ORDER BY age DESC) AS seniority FROM staff WHERE building_id = 8;',
+    gotcha: 'RANK skips numbers after a tie: 1, 1, 3. DENSE_RANK does not: 1, 1, 2.',
+  },
+  rownum: {
+    title: 'ROW_NUMBER · PARTITION BY',
+    summary: 'ROW_NUMBER() gives each row a number: 1, 2, 3. PARTITION BY starts again at 1 for each group.',
+    example: 'SELECT * FROM (SELECT building_id, name, hired, ROW_NUMBER() OVER (PARTITION BY building_id ORDER BY hired) AS n FROM staff) WHERE n = 1;',
+    gotcha: 'You cannot use ROW_NUMBER() in the same WHERE. Put it in a subquery first.',
+  },
+  cte: {
+    title: 'WITH (CTEs)',
+    summary: 'WITH gives a query a name. Then you can use that name like a table. It helps you work step by step.',
+    example: "WITH dead AS (SELECT building_id, COUNT(*) AS n FROM cameras WHERE working = 0 GROUP BY building_id) SELECT b.name, dead.n FROM dead JOIN buildings b ON b.id = dead.building_id ORDER BY dead.n DESC;",
+    gotcha: 'Write WITH only once. Separate many named queries with commas.',
+  },
+  union: {
+    title: 'UNION',
+    summary: 'UNION puts the rows of two SELECTs into one list. Both SELECTs need the same number of columns.',
+    example: "SELECT name, 'staff' AS source FROM staff WHERE building_id = 11 UNION SELECT owner, 'phone' FROM phones WHERE kind = 'landline' ORDER BY name;",
+    gotcha: 'UNION removes repeated rows. UNION ALL keeps them.',
+  },
+  exists: {
+    title: 'EXISTS',
+    summary: 'EXISTS is true if the inner query finds at least one row.',
+    example: 'SELECT b.name FROM buildings b WHERE EXISTS (SELECT 1 FROM cameras c WHERE c.building_id = b.id AND c.working = 0);',
+    gotcha: 'The inner query must use the outer row, for example c.building_id = b.id.',
+  },
+};
+export const CONCEPT_ORDER = [
+  'select', 'where', 'orderby', 'limit', 'aggregate',
+  'distinct', 'like', 'inlist', 'between', 'andor',
+  'join', 'groupby',
+  'having', 'multijoin',
+  'subquery', 'leftjoin', 'nulls',
+  'casewhen', 'strings', 'dates',
+  'window', 'rownum',
+  'cte', 'union', 'exists',
+];

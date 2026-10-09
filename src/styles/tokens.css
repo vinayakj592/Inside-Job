@@ -1,0 +1,87 @@
+/* =====================================================================
+   INSIDE JOB — design tokens v2
+   Two worlds:  NOIR (ink · petrol teal · sodium gold · newsprint)
+                BLUEPRINT (light-table blue · white-cyan linework · grease-pencil yellow)
+   ===================================================================== */
+:root {
+  /* ---- ink: the black of a noir print ---- */
+  --ink: #07090b;
+  --ink-2: #0d1316;
+  --ink-3: #141d21;
+  --ink-4: #1f2b30;
+
+  /* ---- petrol teal: fog, shadow tint, night air (kept as --teal-*) ---- */
+  --teal-9: #031417;
+  --teal-8: #061f23;
+  --teal-7: #0a2b30;
+  --teal-6: #0d3a40;
+  --teal-5: #114a51;
+  --teal-4: #176068;
+  --teal-3: #20787d;
+  --teal-2: #3b9391;
+  --teal-1: #86c2b8;
+
+  /* ---- sodium gold: streetlights, windows, loot, the one warm thing ---- */
+  --gold: #f2a93b;
+  --gold-hot: #ffcf5a;
+  --gold-deep: #a8661a;
+  --gold-glow: rgba(242, 169, 59, .42);
+
+  /* ---- paper ---- */
+  --cream: #ece2c9;       /* newsprint: captions, bubbles, text on ink */
+  --cream-2: #d7cbb0;
+  --cream-dim: #9d927c;
+  --manila: #d6b476;      /* case files, evidence tags */
+  --manila-2: #c09a58;
+  --manila-deep: #8a6a33;
+
+  /* ---- blueprint: a glowing light table ---- */
+  --bp-deep: #041630;     /* table edge, falloff */
+  --bp-paper: #0a2a52;    /* paper under the lamp */
+  --bp-paper-hi: #12407a; /* hot centre of the light table */
+  --bp-line: #cdf3ff;     /* linework core */
+  --bp-cyan: #56d9ff;     /* linework glow / accents */
+  --bp-dim: #3b78ad;      /* secondary lines, grid */
+  --bp-ghost: rgba(86, 217, 255, .14);
+  --bp-glow: rgba(86, 217, 255, .5);
+  --grease: #ffd23f;      /* yellow grease pencil: the planners' marks */
+
+  /* ---- failure only ---- */
+  --alarm: #d8412f;
+  --alarm-deep: #6e1a12;
+
+  /* ---- type ---- */
+  --f-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;      /* 900: titles */
+  --f-stencil: 'Big Shoulders Stencil Display', 'Arial Narrow', sans-serif; /* 800–900: logo, buttons, stamps */
+  --f-ui: 'Big Shoulders Text', 'Arial Narrow', sans-serif;              /* 500–800: HUD, labels */
+  --f-serif: 'Bodoni Moda', 'Didot', Georgia, serif;                      /* italic 700/900: accent words */
+  --f-body: 'Courier Prime', 'Courier New', monospace;                    /* dossier reading text */
+  --f-type: 'Special Elite', 'Courier New', monospace;                    /* weathered typewriter: captions */
+  --f-draft: 'Architects Daughter', 'Comic Sans MS', cursive;             /* blueprint hand-lettering */
+  --f-letter: 'Comic Neue', 'Comic Sans MS', sans-serif;                  /* 700 caps: speech bubbles */
+  --f-sfx: 'Bangers', 'Impact', sans-serif;                               /* onomatopoeia */
+  --f-mono: 'JetBrains Mono', ui-monospace, monospace;                    /* SQL + data */
+
+  /* ---- hand-cut shapes (Saul Bass paper). Never perfectly rectangular. ---- */
+  --cut-a: polygon(0.6% 6%, 99.2% 0, 100% 90%, 1.8% 100%);
+  --cut-b: polygon(0 0, 98.4% 5%, 99.4% 100%, 1.2% 93%);
+  --cut-c: polygon(1.4% 0, 100% 3%, 98.8% 96%, 0 100%);
+  --tag: polygon(14px 0, 100% 0, 100% 100%, 14px 100%, 0 calc(100% - 14px), 0 14px);
+
+  /* ---- motion ---- */
+  --snap: cubic-bezier(.2, 1.5, .4, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --t-fast: 140ms;
+  --t-med: 260ms;
+  --t-slow: 600ms;
+  --twos: steps(2, jump-none);  /* for "animated on twos" loops */
+
+  /* ---- layers ---- */
+  --z-screen: 1;
+  --z-hud: 20;
+  --z-fx: 60;
+  --z-overlay: 80;
+  --z-toast: 100;
+
+  color-scheme: dark;
+}

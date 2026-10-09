@@ -1,0 +1,58 @@
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  user-select: none;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+input, textarea, select { font: inherit; color: inherit; }
+textarea, input, [contenteditable] { user-select: text; }
+a { color: var(--gold); }
+img, svg, canvas { display: block; }
+::selection { background: var(--gold); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--gold-hot); outline-offset: 3px; }
+[hidden] { display: none !important; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--ink-4); border: 3px solid var(--ink); }
+
+#stage { position: fixed; inset: 0; z-index: var(--z-screen); overflow: hidden; }
+#fx-layer { position: fixed; inset: 0; z-index: var(--z-fx); pointer-events: none; }
+#fx-layer > * { pointer-events: auto; }
+#overlay-layer { position: fixed; inset: 0; z-index: var(--z-overlay); pointer-events: none; }
+#overlay-layer > * { pointer-events: auto; }
+#toast-layer { position: fixed; z-index: var(--z-toast); right: 28px; bottom: 28px; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; pointer-events: none; }
+
+.screen { position: absolute; inset: 0; overflow: hidden; }
+
+/* router transitions */
+.screen.is-entering { animation: scr-in var(--t-med) var(--ease-out) both; }
+.screen.is-leaving { animation: scr-out 200ms ease-in both; pointer-events: none; }
+@keyframes scr-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scr-out { to { opacity: 0; } }
+/* wipe: a hand-cut sheet of ink slides across, with a torn halftone fringe */
+.wipe {
+  position: fixed; top: -5%; bottom: -5%; left: 0; width: 135%; z-index: calc(var(--z-overlay) - 1); pointer-events: none;
+  background:
+    radial-gradient(circle, var(--ink) 2.2px, transparent 2.6px) right top / 9px 9px repeat-y,
+    linear-gradient(var(--ink), var(--ink)) left top / calc(100% - 30px) 100% no-repeat;
+  clip-path: polygon(0 0, 96% 0, 100% 18%, 97% 41%, 100% 66%, 96.5% 100%, 0 100%);
+  transform: translateX(-140%) rotate(-3deg);
+}
+.wipe.is-in { animation: wipe-in 340ms var(--ease-out) forwards; }
+.wipe.is-out { transform: translateX(-12%) rotate(-3deg); animation: wipe-out 380ms var(--ease-out) forwards; }
+@keyframes wipe-in { to { transform: translateX(-12%) rotate(-3deg); } }
+@keyframes wipe-out { to { transform: translateX(110%) rotate(-3deg); } }
+
+/* boot: styles are inlined in index.html so the first paint is ink */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+}
